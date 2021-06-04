@@ -3,7 +3,7 @@
  * Expire processes in HM Playbook after 3 months and remind process owners to review them.
  */
 
-namespace HM\Playbook_Process_Expire;
+namespace HM\Content_Expiration;
 
 const CRON_KEY = 'expire_post_cron';
 

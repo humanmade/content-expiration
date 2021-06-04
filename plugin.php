@@ -8,7 +8,7 @@ Author URI: https://humanmade.com/
 Version: 1.0
 */
 
-namespace HM\Playbook_Process_Expire;
+namespace HM\Content_Expiration;
 
 require __DIR__ . '/inc/namespace.php';
 

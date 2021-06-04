@@ -1,0 +1,150 @@
+<?php
+/**
+ * Expire processes in HM Playbook after 3 months and remind process owners to review them.
+ */
+
+namespace HM\Playbook_Process_Expire;
+
+const CRON_KEY = 'expire_post_cron';
+
+use DateTime, DateInterval;
+
+/**
+ * Register actions and filters.
+ *
+ * @return void
+ */
+function bootstrap() {
+	add_action( 'init', __NAMESPACE__ . '\\register_expire_status' );
+	add_action( 'save_post', __NAMESPACE__ . '\\schedule_expire' );
+	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
+
+	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data', 10, 2 );
+}
+
+/**
+ * Register expire post status.
+ *
+ * @return void
+ */
+function register_expire_status() {
+	register_post_status(
+		'expire',
+		[
+			'label'       => _x( 'Expired', 'post status', 'content-expiration' ),
+			'public'      => true,
+			/* translators: %s: Number of expired posts. */
+			'label_count' => _n_noop(
+				'Expired <span class="count">(%s)</span>',
+				'Expired <span class="count">(%s)</span>',
+				'content-expiration'
+			),
+		]
+	);
+}
+
+/**
+ * Expire post.
+ *
+ * Invoked by cron 'expire_post_cron' event.
+ *
+ * @param int $post_id Post ID.
+ */
+function expire_post( $post_id ) {
+	if ( get_post_status( $post_id ) !== 'publish' ) {
+		return;
+	}
+
+	$post = get_post( $post_id );
+	if ( empty( $post ) || is_wp_error( $post ) ) {
+		return;
+	}
+
+	$expire_timestamp = get_expire_timestamp( $post_id );
+
+	if ( $expire_timestamp > time() ) {
+		schedule_expire( $post_id, $expire_timestamp );
+		return;
+	}
+
+	$postarr = [
+		'ID' => $post_id,
+		'post_status' => 'expire',
+	];
+
+	return wp_update_post( $postarr );
+}
+
+/**
+ *  Get post expire timestamp.
+ *
+ *  @param  int    $post_id Post ID.
+ *  @return int Timestamp.
+ */
+function get_expire_timestamp( $post_id ) {
+	$last_modified_timestamp = get_post_modified_time( 'U', false, $post_id );
+	$last_modified_date = new DateTime();
+	$last_modified_date->setTimestamp( $last_modified_timestamp );
+	//$expire_date = $last_modified_date->add( new DateInterval( 'P3M' ) );
+	$expire_date = $last_modified_date->add( new DateInterval( 'PT3M' ) );
+	return (int) $expire_date->format( 'U' );
+}
+
+/**
+ * Unschedule expireing post.
+ *
+ * @param int $post_id Post ID.
+ */
+function unschedule_expire( $post_id ) {
+	wp_clear_scheduled_hook( CRON_KEY, [ $post_id ] );
+}
+
+/**
+ *  Schedule expireing post.
+ *
+ *  @param  int $post_id   Post ID.
+ */
+function schedule_expire( $post_id ) {
+	unschedule_expire( $post_id );
+
+	if ( get_post_status( $post_id ) !== 'publish' ) {
+		return;
+	}
+
+	$timestamp = get_expire_timestamp( $post_id );
+
+	if ( ! empty( $timestamp ) ) {
+		wp_schedule_single_event( $timestamp, CRON_KEY, [ $post_id ] );
+	}
+}
+
+/**
+ * Filter post data when expiring post or updating expired post.
+ *
+ * Keep post_modified timestamp when expiring post and
+ * change post_status to publish when saving expired posts.
+ *
+ * @param array $data Array of processed post data to be inserted/update into the database.
+ * @param array $postarr Array of unprocessed data as passed to `wp_insert_post()`.
+ * @return array
+ */
+function post_data( $data, $postarr ) {
+	if ( empty( $postarr['ID'] ) ) {
+		return $data;
+	}
+
+	$old_status = get_post_status( $postarr['ID'] );
+
+	// Keep post_modified timestamp when expiring post.
+	if ( $old_status === 'publish' && $data['post_status'] === 'expire' ) {
+		$data['post_modified'] = $postarr['post_modified'];
+		$data['post_modified_gmt'] = $postarr['post_modified_gmt'];
+	}
+
+	// Change post_status to publish when saving expired posts.
+	if ( $old_status === 'expire' ) {
+		$data['post_status'] = 'publish';
+	}
+
+	return $data;
+}

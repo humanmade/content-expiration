@@ -104,10 +104,23 @@ function expire_post( $post_id ) {
  */
 function get_expire_timestamp( $post_id ) {
 	$last_modified_timestamp = get_post_modified_time( 'U', false, $post_id );
+
 	$last_modified_date = new DateTime();
 	$last_modified_date->setTimestamp( $last_modified_timestamp );
-	//$expire_date = $last_modified_date->add( new DateInterval( 'P3M' ) );
-	$expire_date = $last_modified_date->add( new DateInterval( 'PT3M' ) );
+
+	/**
+	 * Filters the content expiration period.
+	 *
+	 * Alows different expiration periods per post type or for individual posts.
+	 * The default period is 3 months, the format of the returned value should be
+	 * a valid interval specification for `DateInterval::__construct`.
+	 *
+	 * @param string $post_type Post type.
+	 * @param int $post_id Post ID.
+	 */
+	$expire_interval = apply_filters( 'expiration_period', 'P3M', get_post_type( $post_id ), $post_id );
+	$expire_date = $last_modified_date->add( new DateInterval( $expire_interval ) );
+
 	return (int) $expire_date->format( 'U' );
 }
 

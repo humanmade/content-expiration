@@ -172,7 +172,7 @@ function post_data( $data, $postarr ) {
 	}
 
 	if ( ! post_type_supports( get_post_type( $post_id ), SUPPORTS_KEY ) ) {
-		return;
+		return $data;
 	}
 
 	$old_status = get_post_status( $postarr['ID'] );

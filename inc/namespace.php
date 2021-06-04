@@ -6,6 +6,7 @@
 namespace HM\Content_Expiration;
 
 const CRON_KEY = 'expire_post_cron';
+const SUPPORTS_KEY = 'content-expiration';
 
 use DateTime, DateInterval;
 
@@ -16,10 +17,26 @@ use DateTime, DateInterval;
  */
 function bootstrap() {
 	add_action( 'init', __NAMESPACE__ . '\\register_expire_status' );
-	add_action( 'save_post', __NAMESPACE__ . '\\schedule_expire' );
 	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
+	add_action( 'plugins_loaded', __NAMESPACE__ . '\\setup_post_types' );
 
 	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data', 10, 2 );
+}
+
+/**
+ * Hook into save_post for post types that support content expiration.
+ *
+ * @return void
+ */
+function setup_post_types() {
+	$post_types = get_post_types( [], 'names' );
+	foreach ( $post_types as $post_type ) {
+		if ( ! post_type_supports( $post_type, SUPPORTS_KEY ) ) {
+			continue;
+		}
+
+		add_action( "save_post_{$post_type}", __NAMESPACE__ . '\\schedule_expire' );
+	}
 }
 
 /**
@@ -51,6 +68,10 @@ function register_expire_status() {
  * @param int $post_id Post ID.
  */
 function expire_post( $post_id ) {
+	if ( ! post_type_supports( get_post_type( $post_id ), SUPPORTS_KEY ) ) {
+		return;
+	}
+
 	if ( get_post_status( $post_id ) !== 'publish' ) {
 		return;
 	}
@@ -107,6 +128,10 @@ function unschedule_expire( $post_id ) {
 function schedule_expire( $post_id ) {
 	unschedule_expire( $post_id );
 
+	if ( ! post_type_supports( get_post_type( $post_id ), SUPPORTS_KEY ) ) {
+		return;
+	}
+
 	if ( get_post_status( $post_id ) !== 'publish' ) {
 		return;
 	}
@@ -131,6 +156,10 @@ function schedule_expire( $post_id ) {
 function post_data( $data, $postarr ) {
 	if ( empty( $postarr['ID'] ) ) {
 		return $data;
+	}
+
+	if ( ! post_type_supports( get_post_type( $post_id ), SUPPORTS_KEY ) ) {
+		return;
 	}
 
 	$old_status = get_post_status( $postarr['ID'] );

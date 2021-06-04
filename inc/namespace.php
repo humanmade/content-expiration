@@ -5,10 +5,10 @@
 
 namespace HM\Content_Expiration;
 
+use DateTime, DateInterval;
+
 const CRON_KEY = 'content_expiration_cron';
 const SUPPORTS_KEY = 'content-expiration';
-
-use DateTime, DateInterval;
 
 /**
  * Register actions and filters.

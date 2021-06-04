@@ -5,7 +5,7 @@
 
 namespace HM\Content_Expiration;
 
-const CRON_KEY = 'expire_post_cron';
+const CRON_KEY = 'content_expiration_cron';
 const SUPPORTS_KEY = 'content-expiration';
 
 use DateTime, DateInterval;

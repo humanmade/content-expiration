@@ -17,8 +17,9 @@ const SUPPORTS_KEY = 'content-expiration';
  */
 function bootstrap() {
 	add_action( 'init', __NAMESPACE__ . '\\register_expire_status' );
+	add_action( 'wp_loaded', __NAMESPACE__ . '\\setup_post_types' );
+
 	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
-	add_action( 'plugins_loaded', __NAMESPACE__ . '\\setup_post_types' );
 
 	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data', 10, 2 );
 }

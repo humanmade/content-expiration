@@ -30,12 +30,7 @@ function bootstrap() {
  * @return void
  */
 function setup_post_types() {
-	$post_types = get_post_types( [], 'names' );
-	foreach ( $post_types as $post_type ) {
-		if ( ! post_type_supports( $post_type, SUPPORTS_KEY ) ) {
-			continue;
-		}
-
+	foreach ( get_post_types_by_support( SUPPORTS_KEY ) as $post_type ) {
 		add_action( "save_post_{$post_type}", __NAMESPACE__ . '\\schedule_expire' );
 	}
 }

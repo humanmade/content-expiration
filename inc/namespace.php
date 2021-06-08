@@ -99,7 +99,7 @@ function expire_post( $post_id ) {
  *  @return int Timestamp.
  */
 function get_expire_timestamp( $post_id ) {
-	$last_modified_timestamp = get_post_modified_time( 'U', false, $post_id );
+	$last_modified_timestamp = get_post_modified_time( 'U', true, $post_id );
 
 	$last_modified_date = new DateTime();
 	$last_modified_date->setTimestamp( $last_modified_timestamp );

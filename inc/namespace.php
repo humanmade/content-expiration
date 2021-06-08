@@ -42,7 +42,7 @@ function setup_post_types() {
  */
 function register_expire_status() {
 	register_post_status(
-		'expire',
+		'expired',
 		[
 			'label'       => _x( 'Expired', 'post status', 'content-expiration' ),
 			'public'      => true,
@@ -86,7 +86,7 @@ function expire_post( $post_id ) {
 
 	$postarr = [
 		'ID' => $post_id,
-		'post_status' => 'expire',
+		'post_status' => 'expired',
 	];
 
 	return wp_update_post( $postarr );
@@ -174,13 +174,13 @@ function post_data( $data, $postarr ) {
 	$old_status = get_post_status( $postarr['ID'] );
 
 	// Keep post_modified timestamp when expiring post.
-	if ( $old_status === 'publish' && $data['post_status'] === 'expire' ) {
+	if ( $old_status === 'publish' && $data['post_status'] === 'expired' ) {
 		$data['post_modified'] = $postarr['post_modified'];
 		$data['post_modified_gmt'] = $postarr['post_modified_gmt'];
 	}
 
 	// Change post_status to publish when saving expired posts.
-	if ( $old_status === 'expire' ) {
+	if ( $old_status === 'expired' ) {
 		$data['post_status'] = 'publish';
 	}
 

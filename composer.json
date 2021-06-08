@@ -1,0 +1,18 @@
+{
+	"name"       : "humanmade/content-expiration",
+	"description": "Expire content of any post type after set period, based on post modified time.",
+	"homepage"   : "https://github.com/humanmade/content-expiration/",
+	"type"       : "wordpress-plugin",
+	"license"    : "GPL-2.0+",
+	"authors"    : [
+		{
+			"name": "Human Made",
+			"email": "hello@humanmade.com",
+			"homepage": "https://humanmade.com/"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/humanmade/content-expiration/issues",
+		"source": "https://github.com/humanmade/content-expiration/"
+	}
+}

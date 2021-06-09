@@ -4,8 +4,10 @@ Content expiration plugin for the HM Playbook. Allows content of any post type t
 
 ## Add content expiration support to a post type
 
+In order for site administrators be able to set workflows from the admin UI, post type support should be declared in a `plugins_loaded` action hook with priority between 2 and 9.
+
 ```
-add_action( 'init', 'add_content_expiration_support' );
+add_action( 'plugins_loaded', 'add_content_expiration_support', 5 );
 
 /**
  * Add content expiration support to `post` post type.

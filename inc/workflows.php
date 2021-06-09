@@ -7,6 +7,7 @@ namespace HM\Content_Expiration\Workflows;
 
 use const HM\Content_Expiration\SUPPORTS_KEY;
 use HM\Workflows\Event;
+use function HM\Workflows\get_messages_tags;
 
 /**
  * Register actions and filters.
@@ -31,18 +32,49 @@ function setup_workflows() {
 		return;
 	}
 
-	$event = Event::register( 'expire' );
+	$event = Event::register( 'expired' );
 
 	$event->set_listener( [
-		'action'   => 'transition_post_status',
+		'action' => 'transition_post_status',
 		'callback' => function ( $new_status, $old_status, $post ) {
-			if ( $new_status === 'expire' && $old_status === 'publish' ) {
-				return $post;
+			if ( $new_status === $old_status ) {
+				return null;
 			}
-			return null;
+
+			if ( $new_status !== 'expired' ) {
+				return null;
+			}
+
+			return $post;
 		},
 		'accepted_args' => 3,
 	] );
+
+	$event->add_message_tags( get_messages_tags() );
+
+	$event->add_message_action(
+		'view',
+		__( 'View post', 'content-expiration' ),
+		function ( $post_id ) {
+			return get_the_permalink( $post_id );
+		},
+		function ( $post ) {
+			return [ 'post_id' => get_post( $post )->ID ];
+		},
+		[ 'post_id' => 'intval' ]
+	);
+
+	$event->add_message_action(
+		'edit',
+		__( 'Edit post', 'content-expiration' ),
+		function ( $post_id ) {
+			return get_edit_post_link( $post_id, 'raw' );
+		},
+		function ( $post ) {
+			return [ 'post_id' => get_post( $post )->ID ];
+		},
+		[ 'post_id' => 'intval' ]
+	);
 
 	$event->add_recipient_handler(
 		'author',
@@ -52,7 +84,7 @@ function setup_workflows() {
 		__( 'Post Author', 'content-expiration' )
 	);
 
-	$event->add_ui( __( 'When a post expires', 'content-expiration' ) );
+	$event->add_ui( __( 'A post expires', 'content-expiration' ) );
 
 	$event->get_ui()->add_field(
 		'type',

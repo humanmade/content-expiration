@@ -14,7 +14,7 @@ use HM\Workflows\Event;
  * @return void
  */
 function bootstrap() {
-	add_action( 'wp_loaded', __NAMESPACE__ . '\\setup_workflows' );
+	add_action( 'hm.workflows.init', __NAMESPACE__ . '\\setup_workflows', 1 );
 }
 
 /**
@@ -23,12 +23,10 @@ function bootstrap() {
  * @return void
  */
 function setup_workflows() {
-	if ( ! class_exists( 'HM\Workflows\Event' ) ) {
-		return;
-	}
 
 	$post_types = get_post_types_by_support( SUPPORTS_KEY );
 
+	// Bail if no post type supports expiration.
 	if ( empty( $post_types ) ) {
 		return;
 	}

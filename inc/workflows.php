@@ -6,8 +6,8 @@
 namespace HM\Content_Expiration\Workflows;
 
 use const HM\Content_Expiration\SUPPORTS_KEY;
-use HM\Workflows\Event;
 use function HM\Workflows\get_messages_tags;
+use HM\Workflows\Event;
 
 /**
  * Register actions and filters.

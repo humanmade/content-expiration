@@ -26,6 +26,7 @@ function setup_columns() {
 	foreach ( get_post_types_by_support( SUPPORTS_KEY ) as $post_type ) {
 		add_filter( "manage_{$post_type}_posts_columns", __NAMESPACE__ . '\\column_head' );
 		add_action( "manage_{$post_type}_posts_custom_column", __NAMESPACE__ . '\\column_content', 10, 2 );
+		add_filter( "manage_edit-{$post_type}_sortable_columns", __NAMESPACE__ . '\\sortable_columns' );
 	}
 }
 
@@ -78,4 +79,17 @@ function column_content( $column, $post_id ) {
 			esc_html( $formatted_time )
 		);
 	}
+}
+
+/**
+ * Allow sorting by expiration column.
+ *
+ * Since the expiration time is based on post modified time, we can just sort by modified time.
+ *
+ * @param array $columns Array of sortable table columns.
+ * @return array
+ */
+function sortable_columns( $columns ) {
+	$columns['expires'] = 'post_modified';
+	return $columns;
 }

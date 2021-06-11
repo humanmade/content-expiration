@@ -1,6 +1,6 @@
 # Content Expiration
 
-Content expiration plugin for the HM Playbook. Allows content of any post type to expire after set period, based on post modified time (defaults to 3 months). Adds notification options for post author through the [Wordflows plugin](https://github.com/humanmade/Workflows).
+Content expiration plugin for the HM Playbook. Allows content of any post type to expire after set period, based on post modified time (defaults to 3 months). Adds notification options for post author through the [Workflows plugin](https://github.com/humanmade/Workflows).
 
 ## Add content expiration support to a post type
 

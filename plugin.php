@@ -10,7 +10,9 @@
 namespace HM\Content_Expiration;
 
 require __DIR__ . '/inc/namespace.php';
+require __DIR__ . '/inc/admin.php';
 require __DIR__ . '/inc/workflows.php';
 
 bootstrap();
+Admin\bootstrap();
 Workflows\bootstrap();

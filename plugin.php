@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Content Expiration
- * Description: Expire processes in HM Playbook after 3 months and remind process owners to review them.
+ * Description: Expire content of any post type after set period, based on post modified time.
  * Author: Human Made Limited
  * Author URI: https://humanmade.com/
  * Version: 1.0

@@ -5,6 +5,8 @@
  * @see https://github.com/humanmade/plugin-tester
  */
 
+declare( strict_types=1 );
+
 require '/wp-phpunit/includes/functions.php';
 
 tests_add_filter( 'muplugins_loaded', function () {

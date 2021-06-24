@@ -40,4 +40,4 @@ jobs:
 
       - name: Run PHPUnit
         run: |
-          composer test
+          docker run --rm -v "$PWD:/code" humanmade/plugin-tester

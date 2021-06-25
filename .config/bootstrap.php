@@ -13,4 +13,9 @@ tests_add_filter( 'muplugins_loaded', function () {
 	require dirname( __FILE__ ) . '/../plugin.php';
 } );
 
+// Add content expiration support to posts so that we can test functionality.
+tests_add_filter( 'plugins_loaded', function () {
+	add_post_type_support( 'post', 'content-expiration' );
+}, 4 );
+
 require '/wp-phpunit/includes/bootstrap.php';

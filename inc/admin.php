@@ -6,7 +6,7 @@
 namespace HM\Content_Expiration\Admin;
 
 use const HM\Content_Expiration\SUPPORTS_KEY;
-use function HM\Content_Expiration\get_expire_timestamp;
+use HM\Content_Expiration;
 
 /**
  * Register actions and filters.
@@ -54,7 +54,7 @@ function column_content( $column, $post_id ) {
 		return;
 	}
 
-	$timestamp = get_expire_timestamp( $post_id );
+	$timestamp = Content_Expiration\get_expire_timestamp( $post_id );
 
 	// Mimic date formatting from core posts list table.
 	$formatted_time = sprintf(

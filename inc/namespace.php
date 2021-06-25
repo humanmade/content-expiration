@@ -111,6 +111,7 @@ function get_expire_timestamp( $post_id ) {
 	 * The default period is 3 months, the format of the returned value should be
 	 * a valid interval specification for `DateInterval::__construct`.
 	 *
+	 * @param string $period Expiration period.
 	 * @param string $post_type Post type.
 	 * @param int $post_id Post ID.
 	 */

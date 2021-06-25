@@ -6,7 +6,7 @@
 namespace HM\Content_Expiration\Workflows;
 
 use const HM\Content_Expiration\SUPPORTS_KEY;
-use function HM\Workflows\get_messages_tags;
+use HM\Workflows;
 use HM\Workflows\Event;
 
 /**
@@ -50,7 +50,7 @@ function setup_workflows() {
 		'accepted_args' => 3,
 	] );
 
-	$event->add_message_tags( get_messages_tags() );
+	$event->add_message_tags( Workflows\get_messages_tags() );
 
 	$event->add_message_action(
 		'view',

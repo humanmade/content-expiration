@@ -25,6 +25,11 @@ function bootstrap() {
  */
 function setup_workflows() {
 
+	// Bail if Workflows is not initiated.
+	if ( ! class_exists( 'HM\Workflows\Event' ) ) {
+		return;
+	}
+
 	$event = Event::register( 'expired' );
 
 	$event->set_listener( [

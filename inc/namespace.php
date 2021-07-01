@@ -16,8 +16,8 @@ const SUPPORTS_KEY = 'content-expiration';
  * @return void
  */
 function bootstrap() {
-	add_action( 'plugins_loaded', __NAMESPACE__ . '\\register_expire_status', 1 );
-	add_action( 'init', __NAMESPACE__ . '\\setup_post_types' );
+	add_action( 'init', __NAMESPACE__ . '\\register_expire_status', 1 );
+	add_action( 'init', __NAMESPACE__ . '\\setup_post_types', 99 );
 
 	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
 

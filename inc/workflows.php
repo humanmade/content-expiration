@@ -15,7 +15,7 @@ use HM\Workflows\Event;
  * @return void
  */
 function bootstrap() {
-	add_action( 'hm.workflows.init', __NAMESPACE__ . '\\setup_workflows', 1 );
+	add_action( 'init', __NAMESPACE__ . '\\setup_workflows', 99 );
 }
 
 /**

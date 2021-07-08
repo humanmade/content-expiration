@@ -5,7 +5,6 @@
 
 namespace HM\Content_Expiration\Workflows;
 
-use const HM\Content_Expiration\SUPPORTS_KEY;
 use HM\Workflows;
 use HM\Workflows\Event;
 

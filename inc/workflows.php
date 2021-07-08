@@ -14,6 +14,7 @@ use HM\Workflows\Event;
  * @return void
  */
 function bootstrap() {
+	// We can't hook on hm.workflows.init because get_rest_url() is not yet defined there.
 	add_action( 'init', __NAMESPACE__ . '\\setup_workflows' );
 }
 

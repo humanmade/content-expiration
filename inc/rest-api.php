@@ -28,7 +28,7 @@ function register_endpoint() {
 		[
 			'methods' => 'GET',
 			'callback' => __NAMESPACE__ . '\\get_types',
-  	]
+		]
 	);
 }
 
@@ -39,7 +39,7 @@ function register_endpoint() {
  */
 function get_types() {
 	$post_types = array_map(
-		function ( $post_type) {
+		function ( $post_type ) {
 			$post_type_object = get_post_type_object( $post_type );
 			return [
 				'label' => $post_type_object->label,

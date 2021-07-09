@@ -5,7 +5,6 @@
 
 namespace HM\Content_Expiration\Workflows;
 
-use const HM\Content_Expiration\SUPPORTS_KEY;
 use HM\Workflows;
 use HM\Workflows\Event;
 
@@ -15,7 +14,8 @@ use HM\Workflows\Event;
  * @return void
  */
 function bootstrap() {
-	add_action( 'init', __NAMESPACE__ . '\\setup_workflows', 99 );
+	// We can't hook on hm.workflows.init because get_rest_url() is not yet defined there.
+	add_action( 'init', __NAMESPACE__ . '\\setup_workflows' );
 }
 
 /**

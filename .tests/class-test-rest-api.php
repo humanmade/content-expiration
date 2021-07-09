@@ -47,7 +47,7 @@ class Test_REST_API extends WP_UnitTestCase {
 				[
 					'label' => $posts_type->label,
 					'name' => $posts_type->name,
-				]
+				],
 			],
 			$post_types
 		);

@@ -11,8 +11,10 @@ namespace HM\Content_Expiration;
 
 require __DIR__ . '/inc/namespace.php';
 require __DIR__ . '/inc/admin.php';
+require __DIR__ . '/inc/rest-api.php';
 require __DIR__ . '/inc/workflows.php';
 
 bootstrap();
 Admin\bootstrap();
+REST_API\bootstrap();
 Workflows\bootstrap();

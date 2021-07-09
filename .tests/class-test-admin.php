@@ -9,7 +9,7 @@ use HM\Content_Expiration\Admin;
 use WP_UnitTestCase;
 
 /**
- * Tests for base namespace.
+ * Tests for Admin namespace.
  */
 class Test_Admin extends WP_UnitTestCase {
 	/**

@@ -5,7 +5,6 @@
 
 namespace HM\Content_Expiration\Workflows;
 
-use const HM\Content_Expiration\SUPPORTS_KEY;
 use HM\Workflows;
 use HM\Workflows\Event;
 
@@ -15,7 +14,8 @@ use HM\Workflows\Event;
  * @return void
  */
 function bootstrap() {
-	add_action( 'hm.workflows.init', __NAMESPACE__ . '\\setup_workflows', 1 );
+	// We can't hook on hm.workflows.init because get_rest_url() is not yet defined there.
+	add_action( 'init', __NAMESPACE__ . '\\setup_workflows' );
 }
 
 /**
@@ -25,10 +25,8 @@ function bootstrap() {
  */
 function setup_workflows() {
 
-	$post_types = get_post_types_by_support( SUPPORTS_KEY );
-
-	// Bail if no post type supports expiration.
-	if ( empty( $post_types ) ) {
+	// Bail if Workflows is not initiated.
+	if ( ! class_exists( 'HM\Workflows\Event' ) ) {
 		return;
 	}
 
@@ -91,18 +89,11 @@ function setup_workflows() {
 		__( 'Post types', 'content-expiration' ),
 		'select',
 		[
-			'options' => array_values(
-				array_map(
-					function ( $post_type ) {
-						$post_type_object = get_post_type_object( $post_type );
-						return [
-							'label' => $post_type_object->label,
-							'value' => $post_type_object->name,
-						];
-					},
-					$post_types
-				)
-			),
+			'endpoint' => [
+				'url' => get_rest_url( null, 'content-expiration/v1/types' ),
+				'labelKey' => 'label',
+				'valueKey' => 'name',
+			],
 		]
 	);
 }

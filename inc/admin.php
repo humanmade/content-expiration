@@ -37,7 +37,7 @@ function setup_columns() {
  * @return array
  */
 function column_head( $columns ) {
-	$columns['expires'] = apply_filters( 'expiration_column_head', __( 'Expires', 'content-expiration' ) );
+	$columns['expires'] = apply_filters( 'content_expiration.admin.column_head', __( 'Expires', 'content-expiration' ) );
 
 	return $columns;
 }
@@ -69,13 +69,13 @@ function column_content( $column, $post_id ) {
 	if ( $timestamp > time() ) {
 		printf(
 			'<span>%1$s<br />%2$s</span>',
-			esc_html( apply_filters( 'expiration_label_expires_on', __( 'Expires on', 'content-expiration' ) ) ),
+			esc_html( apply_filters( 'content_expiration.admin.label_expires_on', __( 'Expires on', 'content-expiration' ) ) ),
 			esc_html( $formatted_time )
 		);
 	} else {
 		printf(
 			'<strong class="wp-ui-text-highlight">%1$s<br />%2$s</strong>',
-			esc_html( apply_filters( 'expiration_label_expired_on', __( 'Expired on', 'content-expiration' ) ) ),
+			esc_html( apply_filters( 'content_expiration.admin.expired_on', __( 'Expired on', 'content-expiration' ) ) ),
 			esc_html( $formatted_time )
 		);
 	}

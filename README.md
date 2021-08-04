@@ -22,7 +22,7 @@ function add_content_expiration_support() {
 ## Filter the content expiration period
 
 ```
-add_filter( 'expiration_period', 'content_expiration_period', 10, 3 );
+add_filter( 'content_expiration.expiration_period', 'content_expiration_period', 10, 3 );
 
 /**
  * Filters the content expiration period.
@@ -41,5 +41,55 @@ function content_expiration_period( $period, $post_type, $post_id ) {
 	}
 
 	return $period;
+}
+```
+
+## Filter the labels in the posts list table
+
+### Column heading
+
+```
+add_filter( 'content_expiration.admin.column_head', 'admin_column_head' );
+
+/**
+ * Filter the content expiration column heading.
+ *
+ * @param string $column_head Original column heading.
+ * @return string
+ */
+function admin_column_head( $column_head ) {
+	return __( 'Next Review', 'textdomain' );
+}
+```
+
+### Column text before post expires
+
+```
+add_filter( 'content_expiration.admin.label_expires_on', __NAMESPACE__ . '\\expires_on_label' );
+
+/**
+ * Filter the column content label when the post is not expired.
+ *
+ * @param string $label Original label
+ * @return string
+ */
+function expires_on_label( $label ) {
+	return __( 'Review by', 'hm-playbook' );
+}
+```
+
+### Column text after post has expired
+
+```
+add_filter( 'content_expiration.admin.expired_on', __NAMESPACE__ . '\\expired_on_label' );
+
+/**
+ * Filter the column content label when the post has already expired.
+ *
+ * @param string $label Original label
+ * @return string
+ */
+function expired_on_label( $label ) {
+	return __( 'Review overdue', 'hm-playbook' );
 }
 ```

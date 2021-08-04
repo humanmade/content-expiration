@@ -115,7 +115,7 @@ function get_expire_timestamp( $post_id ) {
 	 * @param string $post_type Post type.
 	 * @param int $post_id Post ID.
 	 */
-	$expire_interval = apply_filters( 'expiration_period', 'P3M', get_post_type( $post_id ), $post_id );
+	$expire_interval = apply_filters( 'content_expiration.expiration_period', 'P3M', get_post_type( $post_id ), $post_id );
 	$expire_date = $last_modified_date->add( new DateInterval( $expire_interval ) );
 
 	return (int) $expire_date->format( 'U' );

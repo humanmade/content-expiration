@@ -168,7 +168,7 @@ function post_data( $data, $postarr ) {
 		return $data;
 	}
 
-	if ( ! post_type_supports( get_post_type( $post_id ), SUPPORTS_KEY ) ) {
+	if ( ! post_type_supports( get_post_type( $postarr['ID'] ), SUPPORTS_KEY ) ) {
 		return $data;
 	}
 

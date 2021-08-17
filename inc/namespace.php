@@ -168,20 +168,18 @@ function post_data( $data, $postarr ) {
 		return $data;
 	}
 
-	if ( ! post_type_supports( get_post_type( $postarr['ID'] ), SUPPORTS_KEY ) ) {
+	if ( ! post_type_supports( $postarr['post_type'], SUPPORTS_KEY ) ) {
 		return $data;
 	}
 
-	$old_status = get_post_status( $postarr['ID'] );
-
 	// Keep post_modified timestamp when expiring post.
-	if ( $old_status === 'publish' && $data['post_status'] === 'expired' ) {
+	if ( $postarr['post_status'] === 'publish' && $data['post_status'] === 'expired' ) {
 		$data['post_modified'] = $postarr['post_modified'];
 		$data['post_modified_gmt'] = $postarr['post_modified_gmt'];
 	}
 
 	// Change post_status to publish when saving expired posts.
-	if ( $old_status === 'expired' ) {
+	if ( $postarr['post_status'] === 'expired' ) {
 		$data['post_status'] = 'publish';
 	}
 

@@ -21,7 +21,7 @@ function bootstrap() {
 
 	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
 
-	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data', 10, 2 );
+	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data' );
 }
 
 /**
@@ -154,35 +154,28 @@ function schedule_expire( $post_id ) {
 }
 
 /**
- * Filter post data when expiring post or updating expired post.
+ * Filter post data when expiring post or updating.
  *
- * Keep post_modified timestamp when expiring post and
- * change post_status to publish when saving expired posts.
+ * Keep post_modified timestamp when expiring posts.
  *
  * @param array $data Array of processed post data to be inserted/update into the database.
  * @param array $postarr Array of unprocessed data as passed to `wp_insert_post()`.
  * @return array
  */
-function post_data( $data, $postarr ) {
-	if ( empty( $postarr['ID'] ) ) {
+function post_data( $data ) {
+	if ( empty( $data['ID'] ) ) {
 		return $data;
 	}
 
-	if ( ! post_type_supports( get_post_type( $post_id ), SUPPORTS_KEY ) ) {
+	if ( ! post_type_supports( $data['post_type'], SUPPORTS_KEY ) ) {
 		return $data;
 	}
-
-	$old_status = get_post_status( $postarr['ID'] );
 
 	// Keep post_modified timestamp when expiring post.
-	if ( $old_status === 'publish' && $data['post_status'] === 'expired' ) {
-		$data['post_modified'] = $postarr['post_modified'];
-		$data['post_modified_gmt'] = $postarr['post_modified_gmt'];
-	}
-
-	// Change post_status to publish when saving expired posts.
-	if ( $old_status === 'expired' ) {
-		$data['post_status'] = 'publish';
+	if ( $data['post_status'] === 'expired' ) {
+		$original_post = get_post( $data['ID'] );
+		$data['post_modified'] = $original_post['post_modified'];
+		$data['post_modified_gmt'] = $original_post['post_modified_gmt'];
 	}
 
 	return $data;

@@ -172,7 +172,7 @@ function post_data( $data ) {
 
 	// Keep post_modified timestamp when expiring post.
 	if ( $data['post_status'] === 'expired' ) {
-		$original_post = get_post( $data['ID'] );
+		$original_post = get_post( $data['ID'], ARRAY_A );
 		$data['post_modified'] = $original_post['post_modified'];
 		$data['post_modified_gmt'] = $original_post['post_modified_gmt'];
 	}

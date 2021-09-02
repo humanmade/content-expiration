@@ -42,7 +42,7 @@ function setup_workflows() {
 	$event->set_listener( [
 		'action' => 'transition_post_status',
 		'callback' => function ( $new_status, $old_status, $post, $ui_data ) {
-			if ( ! empty( $ui_data['types'] ) && ! in_array( $post->post_type, $ui_data['types'], true ) ) {
+			if ( ! empty( $ui_data['types'] ) && ! in_array( $post->post_type, (array) $ui_data['types'], true ) ) {
 				return null;
 			}
 
@@ -96,7 +96,7 @@ function setup_workflows() {
 	$event->add_ui( __( 'A post expires', 'content-expiration' ) );
 
 	$event->get_ui()->add_field(
-		'type',
+		'types',
 		__( 'Post types', 'content-expiration' ),
 		'select',
 		[

@@ -5,6 +5,7 @@
 
 namespace HM\Content_Expiration\Workflows;
 
+use const HM\Content_Expiration\SUPPORTS_KEY;
 use HM\Workflows;
 use HM\Workflows\Event;
 
@@ -14,8 +15,7 @@ use HM\Workflows\Event;
  * @return void
  */
 function bootstrap() {
-	// We can't hook on hm.workflows.init because get_rest_url() is not yet defined there.
-	add_action( 'init', __NAMESPACE__ . '\\setup_workflows' );
+	add_action( 'hm.workflows.init', __NAMESPACE__ . '\\setup_workflows' );
 }
 
 /**
@@ -30,11 +30,22 @@ function setup_workflows() {
 		return;
 	}
 
+	$post_types = get_post_types_by_support( SUPPORTS_KEY );
+
+	// Bail if no post type supports expiration.
+	if ( empty( $post_types ) ) {
+		return;
+	}
+
 	$event = Event::register( 'expired' );
 
 	$event->set_listener( [
 		'action' => 'transition_post_status',
-		'callback' => function ( $new_status, $old_status, $post ) {
+		'callback' => function ( $new_status, $old_status, $post, $ui_data ) {
+			if ( ! empty( $ui_data['types'] ) && ! in_array( $post->post_type, (array) $ui_data['types'], true ) ) {
+				return null;
+			}
+
 			if ( $new_status === $old_status ) {
 				return null;
 			}
@@ -85,15 +96,23 @@ function setup_workflows() {
 	$event->add_ui( __( 'A post expires', 'content-expiration' ) );
 
 	$event->get_ui()->add_field(
-		'type',
+		'types',
 		__( 'Post types', 'content-expiration' ),
 		'select',
 		[
-			'endpoint' => [
-				'url' => get_rest_url( null, 'content-expiration/v1/types' ),
-				'labelKey' => 'label',
-				'valueKey' => 'name',
-			],
+			'multi' => true,
+			'options' => array_values(
+				array_map(
+					function ( $post_type ) {
+						$post_type_object = get_post_type_object( $post_type );
+						return [
+							'label' => $post_type_object->label,
+							'value' => $post_type_object->name,
+						];
+					},
+					$post_types
+				)
+			),
 		]
 	);
 }

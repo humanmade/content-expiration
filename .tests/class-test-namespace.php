@@ -35,4 +35,38 @@ class Test_Namespace extends WP_UnitTestCase {
 
 		$this->assertEquals( 'expired', $statuses['expired'] );
 	}
+
+	/**
+	 * Ensure post data filter works as expected.
+	 */
+	function test_post_data_filter() {
+		$data = [
+			'post_title' => 'Test',
+			'post_status' => 'publish',
+			'post_type' => 'post',
+		];
+
+		$post_id = wp_insert_post( $data );
+
+		$original_post = get_post( $post_id, ARRAY_A );
+
+		$data = $original_post;
+		$data['post_status'] = 'expired';
+		$data['post_modified'] = '1970-01-01 00:00:00';
+		$data['post_modified_gmt'] = '1970-01-01 00:00:00';
+
+		// Test that modified_date is kept when transitioning status to expired.
+		$modified_data = Content_Expiration\post_data( $data );
+
+		$this->assertEquals( $original_post['post_modified'], $modified_data['post_modified'] );
+		$this->assertEquals( $original_post['post_modified_gmt'], $modified_data['post_modified_gmt'] );
+
+		// Test that data is untouched when the post type doesn't support expiration.
+		$data = $original_post;
+		$data['post_status'] = 'expired';
+		$data['post_type'] = 'page';
+		$modified_data = Content_Expiration\post_data( $data );
+
+		$this->assertEquals( $data, $modified_data );
+	}
 }

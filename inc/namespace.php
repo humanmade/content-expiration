@@ -160,6 +160,7 @@ function schedule_expire( $post_id ) {
  * Keep post_modified timestamp when expiring posts.
  *
  * @param array $data Array of processed post data to be inserted/update into the database.
+ * @param array $postarr Array of sanitized post data, passed to `wp_inser_post`.
  * @return array
  */
 function post_data( $data, $postarr ) {

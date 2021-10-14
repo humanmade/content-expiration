@@ -21,7 +21,7 @@ function bootstrap() {
 
 	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
 
-	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data' );
+	add_filter( 'wp_insert_post_data', __NAMESPACE__ . '\\post_data', 10, 2 );
 }
 
 /**
@@ -86,6 +86,7 @@ function expire_post( $post_id ) {
 
 	$postarr = [
 		'ID' => $post_id,
+		'post_type' => $post->post_type,
 		'post_status' => 'expired',
 	];
 
@@ -159,10 +160,11 @@ function schedule_expire( $post_id ) {
  * Keep post_modified timestamp when expiring posts.
  *
  * @param array $data Array of processed post data to be inserted/update into the database.
+ * @param array $postarr Array of sanitized post data, passed to `wp_inser_post`.
  * @return array
  */
-function post_data( $data ) {
-	if ( empty( $data['ID'] ) ) {
+function post_data( $data, $postarr ) {
+	if ( empty( $postarr['ID'] ) ) {
 		return $data;
 	}
 
@@ -172,7 +174,7 @@ function post_data( $data ) {
 
 	// Keep post_modified timestamp when expiring post.
 	if ( $data['post_status'] === 'expired' ) {
-		$original_post = get_post( $data['ID'], ARRAY_A );
+		$original_post = get_post( $postarr['ID'], ARRAY_A );
 		$data['post_modified'] = $original_post['post_modified'];
 		$data['post_modified_gmt'] = $original_post['post_modified_gmt'];
 	}

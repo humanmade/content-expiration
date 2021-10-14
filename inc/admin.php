@@ -6,9 +6,9 @@
 namespace HM\Content_Expiration\Admin;
 
 use const HM\Content_Expiration\SUPPORTS_KEY;
-use HM\Content_Expiration;
 use DateTime;
 use DateTimeZone;
+use HM\Content_Expiration;
 
 /**
  * Register actions and filters.

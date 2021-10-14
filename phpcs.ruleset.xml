@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <ruleset name="content-expiration">
-    <description>HM Coding Standards rules for content-expiration plugin</description>
+	<description>HM Coding Standards rules for content-expiration plugin</description>
 
-    <rule ref="vendor/humanmade/coding-standards" />
+	<rule ref="vendor/humanmade/coding-standards" />
 
-    <!-- Ignore inc directory rule with test files -->
+	<!-- Ignore inc directory rule with test files -->
 	<rule ref="HM.Files.NamespaceDirectoryName.NoIncDirectory">
 		<exclude-pattern>.tests/*</exclude-pattern>
 	</rule>

@@ -59,9 +59,7 @@ function column_content( $column, $post_id ) {
 	$timestamp = Content_Expiration\get_expire_timestamp( $post_id );
 
 	// Get timezone offset, date_i18n requires timestamp plus timezone offset.
-	$datetime = new DateTime();
-	$datetime->setTimestamp( $timestamp );
-	$datetime->setTimezone( new DateTimeZone( 'UTC' ) );
+	$datetime = new DateTime( "@$timestamp", new DateTimeZone( 'UTC' ) );
 	$offset = wp_timezone()->getOffset( $datetime );
 
 	// Mimic date formatting from core posts list table.

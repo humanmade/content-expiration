@@ -56,7 +56,7 @@ class Test_Namespace extends WP_UnitTestCase {
 		$data['post_modified_gmt'] = '1970-01-01 00:00:00';
 
 		// Test that modified_date is kept when transitioning status to expired.
-		$modified_data = Content_Expiration\post_data( $data );
+		$modified_data = Content_Expiration\post_data( $data, $data );
 
 		$this->assertEquals( $original_post['post_modified'], $modified_data['post_modified'] );
 		$this->assertEquals( $original_post['post_modified_gmt'], $modified_data['post_modified_gmt'] );
@@ -65,7 +65,7 @@ class Test_Namespace extends WP_UnitTestCase {
 		$data = $original_post;
 		$data['post_status'] = 'expired';
 		$data['post_type'] = 'page';
-		$modified_data = Content_Expiration\post_data( $data );
+		$modified_data = Content_Expiration\post_data( $data, $data );
 
 		$this->assertEquals( $data, $modified_data );
 	}

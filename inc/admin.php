@@ -6,6 +6,8 @@
 namespace HM\Content_Expiration\Admin;
 
 use const HM\Content_Expiration\SUPPORTS_KEY;
+use DateTime;
+use DateTimeZone;
 use HM\Content_Expiration;
 
 /**
@@ -56,14 +58,18 @@ function column_content( $column, $post_id ) {
 
 	$timestamp = Content_Expiration\get_expire_timestamp( $post_id );
 
+	// Get timezone offset, date_i18n requires timestamp plus timezone offset.
+	$datetime = new DateTime( "@$timestamp", new DateTimeZone( 'UTC' ) );
+	$offset = wp_timezone()->getOffset( $datetime );
+
 	// Mimic date formatting from core posts list table.
 	$formatted_time = sprintf(
 		/* translators: 1: Post date, 2: Post time. */
 		__( '%1$s at %2$s' ),
 		/* translators: Post date format. See https://www.php.net/manual/datetime.format.php */
-		date_i18n( __( 'Y/m/d' ), $timestamp, true ),
+		date_i18n( __( 'Y/m/d' ), $timestamp + $offset, true ),
 		/* translators: Post time format. See https://www.php.net/manual/datetime.format.php */
-		date_i18n( __( 'g:i a' ), $timestamp, true )
+		date_i18n( __( 'g:i a' ), $timestamp + $offset, true )
 	);
 
 	if ( $timestamp > time() ) {

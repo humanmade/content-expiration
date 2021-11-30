@@ -5,7 +5,7 @@
 
 namespace HM\Content_Expiration;
 
-use DateTime, DateInterval;
+use DateTime, DateInterval, WP_Taxonomy;
 
 const CRON_KEY = 'content_expiration_cron';
 const SUPPORTS_KEY = 'content-expiration';
@@ -18,6 +18,8 @@ const SUPPORTS_KEY = 'content-expiration';
 function bootstrap() {
 	add_action( 'init', __NAMESPACE__ . '\\register_expire_status', 1 );
 	add_action( 'init', __NAMESPACE__ . '\\setup_post_types', 99 );
+
+	add_filter( 'update_post_term_count_statuses', __NAMESPACE__ . '\\count_expired_posts', 10, 2 );
 
 	add_action( CRON_KEY, __NAMESPACE__ . '\\expire_post' );
 
@@ -54,6 +56,30 @@ function register_expire_status() {
 			),
 		]
 	);
+}
+
+/**
+ * Add the expired post status to post statuses, counted in taxonomy posts counts.
+ *
+ * @param array $post_statuses Array of counted post statuses.
+ * @param WP_Taxonomy $taxonomy The taxonomy object.
+ * @return array
+ */
+function count_expired_posts( $post_statuses, $taxonomy ) {
+	$post_types = (array) $taxonomy->object_type;
+	$has_support = array_reduce(
+		$post_types,
+		function( $support, $post_type ) {
+			return $support || post_type_supports( $post_type, SUPPORTS_KEY );
+		},
+		false
+	);
+
+	if ( $has_support ) {
+		array_push( $post_statuses, 'expired' );
+	}
+
+	return $post_statuses;
 }
 
 /**

@@ -19,6 +19,8 @@ class Test_Namespace extends WP_UnitTestCase {
 		$this->assertEquals( 1, has_filter( 'init', 'HM\Content_Expiration\register_expire_status' ) );
 		$this->assertEquals( 99, has_filter( 'init', 'HM\Content_Expiration\setup_post_types' ) );
 
+		$this->assertEquals( 10, has_filter( 'update_post_term_count_statuses', 'HM\Content_Expiration\count_expired_posts' ) );
+
 		$this->assertEquals( 10, has_filter( 'save_post_post', 'HM\Content_Expiration\schedule_expire' ) );
 		$this->assertEquals( 10, has_filter( 'wp_insert_post_data', 'HM\Content_Expiration\post_data' ) );
 
@@ -34,6 +36,17 @@ class Test_Namespace extends WP_UnitTestCase {
 		$statuses = get_post_stati();
 
 		$this->assertEquals( 'expired', $statuses['expired'] );
+	}
+
+	/**
+	 * Ensure post term count statuses filter works as expected.
+	 */
+	function test_post_term_count_statuses_filter() {
+		add_post_type_support( 'post', Content_Expiration\SUPPORTS_KEY );
+		$taxonomy = get_taxonomy( 'category' );
+		$post_statuses = [ 'publish' ];
+		$post_statuses = apply_filters( 'update_post_term_count_statuses', $post_statuses, $taxonomy );
+		$this->assertContains( 'expired', $post_statuses );
 	}
 
 	/**

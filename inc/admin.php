@@ -56,6 +56,13 @@ function column_content( $column, $post_id ) {
 		return;
 	}
 
+	$post_status = get_post_status( $post_id );
+	$post_status_object = get_post_status_object( $post_status );
+	if ( ! $post_status_object->public ) {
+		esc_html_e( 'N/A', 'content-expiration' );
+		return;
+	}
+
 	$timestamp = Content_Expiration\get_expire_timestamp( $post_id );
 
 	// Get timezone offset, date_i18n requires timestamp plus timezone offset.

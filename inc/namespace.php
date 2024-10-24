@@ -104,6 +104,9 @@ function expire_post( $post_id ) {
 	}
 
 	$expire_timestamp = get_expire_timestamp( $post_id );
+	if ( $expire_timestamp === null ) {
+		return;
+	}
 
 	if ( $expire_timestamp > time() ) {
 		schedule_expire( $post_id, $expire_timestamp );
@@ -123,7 +126,7 @@ function expire_post( $post_id ) {
  *  Get post expire timestamp.
  *
  *  @param  int    $post_id Post ID.
- *  @return int Timestamp.
+ *  @return int|null Timestamp.
  */
 function get_expire_timestamp( $post_id ) {
 	$last_modified_timestamp = get_post_modified_time( 'U', true, $post_id );
@@ -138,11 +141,15 @@ function get_expire_timestamp( $post_id ) {
 	 * The default period is 3 months, the format of the returned value should be
 	 * a valid interval specification for `DateInterval::__construct`.
 	 *
-	 * @param string $period Expiration period.
+	 * @param string|null $period Expiration period if set, null to not expire.
 	 * @param string $post_type Post type.
 	 * @param int $post_id Post ID.
 	 */
 	$expire_interval = apply_filters( 'content_expiration.expiration_period', 'P3M', get_post_type( $post_id ), $post_id );
+	if ( empty( $expire_interval ) ) {
+		return null;
+	}
+
 	$expire_date = $last_modified_date->add( new DateInterval( $expire_interval ) );
 
 	return (int) $expire_date->format( 'U' );

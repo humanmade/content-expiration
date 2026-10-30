@@ -3,7 +3,7 @@
 	"description": "Expire content of any post type after set period, based on post modified time.",
 	"homepage"   : "https://github.com/humanmade/content-expiration/",
 	"type"       : "wordpress-plugin",
-	"license"    : "GPL-2.0+",
+	"license"    : "GPL-2.0-or-later",
 	"authors"    : [
 		{
 			"name": "Human Made",
